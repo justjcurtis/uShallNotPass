@@ -212,22 +212,11 @@ def wipe(filly):
             res = res + "0"
             i = i+1
 
-        write(res, filly)
-        write("", filly)
-        write(res, filly)
-        write("", filly)
-        write(res, filly)
-        write("", filly)
-        write(res, filly)
-        write("", filly)
-        write(res, filly)
-        write("", filly)
-        write(res, filly)
-        write("", filly)
-        write(res, filly)
-        write("", filly)
-        write(res, filly)
-        write("", filly)
+            j = 0
+            while j < 32:
+                write(res, filly)
+                write("", filly)
+                j = j + 1
 
         deleteDat(filly)
     except Exception as e:
