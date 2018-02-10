@@ -62,8 +62,9 @@ def changePass():
     input("Press enter to return to main menu..")
     maine()
 def closeSecurely():
-    packDat(fDat, enC, pas)
-    deleteDat(fDat)
+    if fDat.exists():
+        packDat(fDat, enC, pas)
+        deleteDat(fDat)
     quit()
 
 def deleteDat(filly):
@@ -76,6 +77,8 @@ def showAll(i):
     global dat
     clr()
 
+    if(i < 1):
+        dat = read(fDat)
     if(i < 1):
         dat = read(fDat)
     print("Name\t\t:\t\tPassword")
@@ -127,6 +130,11 @@ def editDat():
         nme = input("--> ")
         print("Please enter password")
         passs = input("--> ")
+        global dat
+        if len(dat) < 1:
+            dat = {
+
+            }
         dat[nme] = passs
         print(nme + " added successfuly")
         input("Press enter to return to Edit menu")
@@ -161,7 +169,10 @@ def editDat():
             print("Are you sure you\'re sure?(y/n)")
             conf = input("--> ")
             if (conf == "y"):
+                print("Wiping...")
                 wipe(fDat)
+                wipe(enC)
+                print("Done Wiping")
         input("Press enter to return to Edit menu")
         editDat()
     elif(func == "5"):
@@ -190,40 +201,38 @@ def updateDat():
     dat = read(fDat)
 
 def wipe(filly):
-    print("Initialising wipe..")
-    global dat
-    updateDat()
-    lenny = len(dat)-1
 
-    i=0
-    res = ""
-    while i < lenny:
-        res = res + "0"
-        i = i+1
+    try:
+        temp = readByt(filly)
+        lenny = len(temp)-1
 
-    print("Done Initialising")
-    print("Wiping...")
-    write(res, fDat)
-    write("", fDat)
-    write(res, fDat)
-    write("", fDat)
-    write(res, fDat)
-    write("", fDat)
-    write(res, fDat)
-    write("", fDat)
-    write(res, fDat)
-    write("", fDat)
-    write(res, fDat)
-    write("", fDat)
-    write(res, fDat)
-    write("", fDat)
-    write(res, fDat)
-    write("", fDat)
+        i=0
+        res = ""
+        while i < lenny:
+            res = res + "0"
+            i = i+1
 
-    deleteDat(fDat)
-    deleteDat(enC)
+        write(res, filly)
+        write("", filly)
+        write(res, filly)
+        write("", filly)
+        write(res, filly)
+        write("", filly)
+        write(res, filly)
+        write("", filly)
+        write(res, filly)
+        write("", filly)
+        write(res, filly)
+        write("", filly)
+        write(res, filly)
+        write("", filly)
+        write(res, filly)
+        write("", filly)
 
-    print("Finished Wipe")
+        deleteDat(filly)
+    except Exception as e:
+        pass
+
     updateDat()
 
 
@@ -287,22 +296,41 @@ def Gen(chars, pLen, stronkth):
         print ("Save current (c) password or other ? (o)")
         cORo = input("--> ")
         if(cORo == "c"):
-            savePass(res)
+            print("Please enter name for password")
+            nme = input("--> ")
+            savePass(nme, res)
+            print ("Password added successfuly")
+            input ("Press enter to return to Gen menu...")
+            GenInit()
         elif(cORo == "o"):
+            print("Please enter name for password")
+            nme = input("--> ")
             print ("Please input password to save")
             passs = input("--> ")
-            savePass(passs)
+            savePass(nme, passs)
+            print ("Password added successfuly")
+            input ("Press enter to return to Gen menu...")
+            GenInit()
         else:
-            savePass(res)
+            print("Please enter name for password")
+            nme = input("--> ")
+            savePass(nme, res)
+            print ("Password added successfuly")
+            input ("Press enter to return to Gen menu...")
+            GenInit()
     else:
         print ("Please choose a function..")
-        input("Press enter to return to main menu..")
-        maine()
+        input("Press enter to return to Gen menu..")
+        GenInit()
 
 def read(filly):
-    with open(filly) as json_data:
-        res = json.load(json_data)
-    return res
+    try:
+        with open(filly) as json_data:
+            res = json.load(json_data)
+        return res
+    except Exception as e:
+        pass
+    return ""
 def write(dat, filly):
     with open(filly, 'w') as outfile:
         json.dump(dat, outfile)
@@ -315,25 +343,21 @@ def readByt(filly):
     return res
 
 
-def savePass(passs):
-    clr()
-    print("Please enter name for password")
-    nme = input("--> ")
-
+def savePass(nme, passs):
     res = {
         nme : passs
     }
 
     if fDat.exists():
         dat = read(fDat)
-        dat[nme] = passs
-        write(dat, fDat)
+        if(len(dat)>1):
+            dat[nme] = passs
+            write(dat, fDat)
+        else:
+            write(res, fDat)
     else:
         write(res, fDat)
 
-    print ("Password added successfuly")
-    input ("Press enter to return to main menu...")
-    maine()
 
 def packDat(filly, out, pas):
     data = readByt(filly)
@@ -352,8 +376,13 @@ def unpackDat(filly, out, pas):
 def __init__():
     global pas
     clr()
+    print("Enter Database Password")
     pas = input("--> ")
-    unpackDat(enC, fDat, pas)
+    if enC.exists():
+        unpackDat(enC, fDat, pas)
+    if not fDat.exists():
+        with open(fDat, "w") as f:
+            f.write("")
 
 
 

@@ -1,0 +1,1 @@
+uShallNotPass is a password manager built for use on local machine with generator and database encryption built in.
