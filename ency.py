@@ -26,12 +26,3 @@ class AESCipher(object):
         iv = enc[:AES.block_size]
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
         return self._unpad(cipher.decrypt(enc[AES.block_size:])).decode('utf-8')
-
-    '''def _pad(self, s):
-        res =  s + (self.bs - len(s) % self.bs) * chr(self.bs - len(s) % self.bs)
-
-        return res
-    @staticmethod
-    def _unpad(s):
-        return s[:-ord(s[len(s)-1:])]
-        '''
