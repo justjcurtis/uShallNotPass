@@ -24,7 +24,7 @@ def maine():
     clr()
     print ('Enter number to proceed.')
     print("========================")
-    print ('1 : Search Pass')
+    print ('1 : Search Passwords')
     print ('2 : View All')
     print ('3 : Edit Data')
     print ('4 : Generate New')
@@ -36,7 +36,16 @@ def maine():
 
     if(func == "1"):
         search = input("Please enter your search term --> ")
-        searchPass(search)
+        if search == "":
+            print("Please enter a search term..")
+            input("Press enter to return to main menu..")
+            maine()
+        else:
+            tos = input("Enter search type\n========================\n1 : Search names only\n2 : Search passwords only\n3 : Search names and passwords\n========================\n--> ")
+            if tos == "":
+                input("Please enter search type\nPress enter to return to main menu..")
+            else:
+                searchPass(search, tos)
     elif(func == "2"):
         viewAll()
     elif(func == "3"):
@@ -73,33 +82,57 @@ def deleteDat(filly):
 def clr():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-def showAll(i):
-    global dat
+def showAll(i = 0, list = {}):
+    if(list == {}):
+        global dat
+        list = dat
+        if(i > 0):
+            dat = read(fDat)
     clr()
 
-    if(i < 1):
-        dat = read(fDat)
-    if(i < 1):
-        dat = read(fDat)
     print("Name\t\t:\t\tPassword")
     print("================================================")
-    for i in dat:
+    for i in list:
         if len(i) > 7:
-            print("{}\t:\t\t{}".format(i,dat[i]))
+            print("{}\t:\t\t{}".format(i,list[i]))
         else:
-            print("{}\t\t:\t\t{}".format(i,dat[i]))
+            print("{}\t\t:\t\t{}".format(i,list[i]))
 
     print("================================================")
-def searchPass(s):
-    clr()
-    print("Search Results for \"" + s + "\":")
 
-    print ("Not yet implemented")
+def searchPass(s, tos):
+    clr()
+    global dat
+    updateDat()
+    print("Searching for \"" + s + "\" ...")
+    res = {}
+    print (tos)
+    for entry in dat:
+        nme = str(entry)
+        pas = str(dat[entry])
+
+        if tos == "1":
+            if s in nme:
+                res[nme] = pas
+        elif tos == "2":
+            if s in pas:
+                res[nme] = pas
+        else:
+            if s in nme:
+                res[nme] = pas
+            elif s in pas:
+                res[nme] = pas
+
+    if len(res) == 0:
+        print("Nothing found.")
+    else:
+        showAll(0, res)
+
     input("Press enter to return to main menu..")
     maine()
 
 def viewAll():
-    showAll(0)
+    showAll(1)
 
     print("")
     print("enter e to edit values")
@@ -112,7 +145,7 @@ def viewAll():
 
 def editDat():
     clr()
-    showAll(1)
+    showAll(0)
     print ('Enter number to proceed.')
     print("========================")
     print ('1 : Edit or create new entry')
@@ -289,8 +322,8 @@ def Gen(chars, pLen, stronkth):
             nme = input("--> ")
             savePass(nme, res)
             print ("Password added successfuly")
-            input ("Press enter to return to Gen menu...")
-            GenInit()
+            input ("Press enter to return to main menu..")
+            maine()
         elif(cORo == "o"):
             print("Please enter name for password")
             nme = input("--> ")
@@ -298,19 +331,19 @@ def Gen(chars, pLen, stronkth):
             passs = input("--> ")
             savePass(nme, passs)
             print ("Password added successfuly")
-            input ("Press enter to return to Gen menu...")
-            GenInit()
+            input ("Press enter to return to main menu..")
+            maine()
         else:
             print("Please enter name for password")
             nme = input("--> ")
             savePass(nme, res)
             print ("Password added successfuly")
-            input ("Press enter to return to Gen menu...")
-            GenInit()
+            input ("Press enter to return to main menu..")
+            maine()
     else:
         print ("Please choose a function..")
-        input("Press enter to return to Gen menu..")
-        GenInit()
+        input("Press enter to return to main menu..")
+        maine()
 
 def read(filly):
     try:
@@ -339,7 +372,7 @@ def savePass(nme, passs):
 
     if fDat.exists():
         dat = read(fDat)
-        if(len(dat)>1):
+        if(len(dat) > 0):
             dat[nme] = passs
             write(dat, fDat)
         else:
